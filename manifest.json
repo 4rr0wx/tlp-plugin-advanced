@@ -1,10 +1,10 @@
 {
 	"id": "obsidian-highlightpublicnotes-plugin",
-	"name": "Highlight TLP Notes",
+	"name": "TLP Plugin Advanced",
 	"version": "1.7.0",
 	"minAppVersion": "0.9.12",
 	"description": "Visualize the Obsidian UI with the correct TLP color (WHITE, GREEN, AMBER, AMBER:STRICT, RED) based on frontmatter or folders.",
-	"author": "dennis seidel",
+	"author": "Martin (based on the original plugin by Dennis Seidel)",
 	"authorUrl": "https://dennisseidel.de",
 	"isDesktopOnly": false
 }

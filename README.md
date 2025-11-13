@@ -1,4 +1,4 @@
-# Highlight TLP Notes
+# TLP Plugin Advanced
 
 This plugin for [Obsidian](https://obsidian.md/) highlights the UI of notes that you **classify with a TLP level in the frontmatter** or that are **contained in a specific folder**. This prevents you from leaking confidential data because the note is visually tagged as TLP WHITE, GREEN, AMBER, AMBER:STRICT, or RED the moment you open it.
 
