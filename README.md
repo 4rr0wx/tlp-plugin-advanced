@@ -14,11 +14,11 @@ Obsidian has a [cssclasses](https://forum.obsidian.md/t/apply-custom-css-to-cert
 
 ## Compatibility
 
-`obsidian-highlightpublicnotes-plugin` currently requires Obsidian v0.9.12 or above to work properly.
+`tlp-plugin-advanced` currently requires Obsidian v0.9.12 or above to work properly.
 
 ## Installation
 
-You can install the plugin via the Community Plugins tab within Obsidian. Just search for "highlight public notes".
+You can install the plugin via the Community Plugins tab within Obsidian. Just search for "TLP Plugin Advanced".
 
 ## Changes
 

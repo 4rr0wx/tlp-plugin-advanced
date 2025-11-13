@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-highlightpublicnotes-plugin",
+  "name": "tlp-plugin-advanced",
   "version": "1.7.0",
   "description": "Highlight notes with TLP colors (WHITE, GREEN, AMBER, AMBER:STRICT, RED) via frontmatter or folder rules.",
   "main": "main.js",
