@@ -1,22 +1,44 @@
-import { App, Plugin, PluginSettingTab, Setting, CachedMetadata, TFile } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+
+type TlpClassification = 'white' | 'green' | 'amber' | 'amberStrict' | 'red';
+
+interface TlpValueSettings {
+	white: string;
+	green: string;
+	amber: string;
+	amberStrict: string;
+	red: string;
+}
 
 interface PluginSettings {
-	useFrontmatterHighlight: boolean,
-	usePathHighlight: boolean,
-	frontmatterAttribute: string,
-	valueToHighlight: string,
-	pathToHighlight: string,
-	uiElementToHighlight: string,
+	useFrontmatterHighlight: boolean;
+	usePathHighlight: boolean;
+	frontmatterAttribute: string;
+	tlpValues: TlpValueSettings;
+	pathToHighlight: string;
+	uiElementToHighlight: string;
 }
+
+const TLP_CLASSIFICATIONS: TlpClassification[] = ['white', 'green', 'amber', 'amberStrict', 'red'];
+
+const DEFAULT_TLP_VALUES: TlpValueSettings = {
+	white: 'WHITE',
+	green: 'GREEN',
+	amber: 'AMBER',
+	amberStrict: 'AMBER:STRICT',
+	red: 'RED',
+};
 
 const DEFAULT_SETTINGS: PluginSettings = {
 	useFrontmatterHighlight: true,
 	usePathHighlight: false,
 	frontmatterAttribute: 'classification',
-	valueToHighlight: 'public',
+	tlpValues: { ...DEFAULT_TLP_VALUES },
 	pathToHighlight: '',
 	uiElementToHighlight: 'titlebar',
-}
+};
+
+const HIGHLIGHT_CLASSNAMES = ['tlp-highlight', 'tlp-highlight-light', ...TLP_CLASSIFICATIONS.map((level) => `tlp-${level}`)];
 
 export default class HighlightpublicnotesPlugin extends Plugin {
 	settings: PluginSettings;
@@ -32,10 +54,9 @@ export default class HighlightpublicnotesPlugin extends Plugin {
 		if (!file || file.extension !== 'md')
       		return;
 
-		// check for path highlighting first
 		if(this.settings.usePathHighlight) {
 			if (this.checkPath(file.path, this.settings.pathToHighlight)) {
-				this.highlightNote()
+				this.highlightNote('red')
 			} else {
 				this.unhighlightNote()
 				// if not in higlighte path check classifiedFrontmatter
@@ -51,40 +72,58 @@ export default class HighlightpublicnotesPlugin extends Plugin {
 
 	private higlightClassifiedFrontmatterFile(file: TFile) {
 		const classification = this.app.metadataCache.getFileCache(file)?.frontmatter?.[this.settings.frontmatterAttribute]
-		const normalizedClassification = classification?.toString().toLowerCase()
-		const valueToHighlight = this.settings.valueToHighlight
-		const normalizedValueToHighlight = valueToHighlight?.toString().toLowerCase()
-		if (normalizedClassification == normalizedValueToHighlight) {
-			this.highlightNote()
+		const tlpLevel = this.resolveTlpLevel(classification)
+		if (tlpLevel) {
+			this.highlightNote(tlpLevel)
 		} else {
 			this.unhighlightNote()
 		}
 	}
 
-	private highlightNote() {
-		const titlebar = document.getElementsByClassName(this.settings.uiElementToHighlight)[0]
-		if (this.settings.uiElementToHighlight == 'titlebar') {
-			titlebar.classList.add("myalert")
-		} else {
-			titlebar.classList.add("myalert-light")
+	private resolveTlpLevel(value: unknown): TlpClassification | null {
+		if (!value) {
+			return null
 		}
+		const normalized = value.toString().trim().toLowerCase()
+		for (const level of TLP_CLASSIFICATIONS) {
+			const configuredValue = this.settings.tlpValues[level]
+			if (configuredValue && normalized === configuredValue.trim().toLowerCase()) {
+				return level
+			}
+		}
+		return null
+	}
+
+	private highlightNote(level: TlpClassification) {
+		const highlightTarget = this.getUiElement()
+		if (!highlightTarget) {
+			return
+		}
+		highlightTarget.classList.remove(...HIGHLIGHT_CLASSNAMES)
+		const baseClass = this.settings.uiElementToHighlight === 'titlebar' ? 'tlp-highlight' : 'tlp-highlight-light'
+		highlightTarget.classList.add(baseClass, `tlp-${level}`)
 	}
 
 	private unhighlightNote() {
-			const titlebar = document.getElementsByClassName(this.settings.uiElementToHighlight)[0]
-			if (this.settings.uiElementToHighlight == 'titlebar') {
-				titlebar.classList.remove("myalert")
-			} else {
-				titlebar.classList.remove("myalert-light")
+			const highlightTarget = this.getUiElement()
+			if (!highlightTarget) {
+				return
 			}
+			highlightTarget.classList.remove(...HIGHLIGHT_CLASSNAMES)
 	}
 
 	private checkPath(currentPath: string, blacklistedPath: string): boolean {
 		return currentPath.includes(blacklistedPath)
 	}
 
+	private getUiElement(): HTMLElement | undefined {
+		return document.getElementsByClassName(this.settings.uiElementToHighlight)[0] as HTMLElement | undefined
+	}
+
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		const loadedData = await this.loadData();
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
+		this.settings.tlpValues = Object.assign({}, DEFAULT_TLP_VALUES, loadedData?.tlpValues);
 	}
 
 	async saveSettings() {
@@ -150,6 +189,7 @@ class SettingTab extends PluginSettingTab {
 
 		if (this.plugin.settings.useFrontmatterHighlight) {
 			this.addFrontMatterSettings(containerEl)
+			this.addTlpSettings(containerEl)
 		}
         if (this.plugin.settings.usePathHighlight) {
             this.addPathHighlightSettings(containerEl)
@@ -191,16 +231,36 @@ class SettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings()
 				}))
 			
-        new Setting(container)
-			.setName('Value')
-			.setDesc('the value that indicates public visibility')
-			.addText(text => text
-				.setPlaceholder('public')
-				.setValue(this.plugin.settings.valueToHighlight)
-				.onChange(async (value) => {
-					this.plugin.settings.valueToHighlight = value
-					await this.plugin.saveSettings()
-                })
-            )
+       
        }
+
+	addTlpSettings(container: HTMLElement): void {
+		container.createEl('h3', {
+			text: "TLP Classification Settings"
+		})
+		container.createEl('p', {
+			text: "Define which frontmatter values map to the individual TLP levels."
+		})
+
+		const prettyNames: Record<TlpClassification, string> = {
+			white: 'WHITE',
+			green: 'GREEN',
+			amber: 'AMBER',
+			amberStrict: 'AMBER:STRICT',
+			red: 'RED',
+		}
+
+		for (const level of TLP_CLASSIFICATIONS) {
+			new Setting(container)
+				.setName(prettyNames[level])
+				.setDesc(`Set the exact text the plugin should match for TLP ${prettyNames[level]}.`)
+				.addText(text => text
+					.setPlaceholder(prettyNames[level])
+					.setValue(this.plugin.settings.tlpValues[level])
+					.onChange(async (value) => {
+						this.plugin.settings.tlpValues[level] = value || prettyNames[level]
+						await this.plugin.saveSettings()
+					}))
+		}
+	}
 }

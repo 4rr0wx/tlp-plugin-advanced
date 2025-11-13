@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0] - 2025-11-13
+
+### Features
+
+* add configurable TLP (WHITE/GREEN/AMBER/AMBER:STRICT/RED) highlighting for frontmatter and path based rules
+* refresh settings UI so each TLP level can be configured individually
+
 ## [1.6.0](https://github.com/dennisseidel/highlightpublicnotes-obsidian-plugin/compare/1.5.1...1.6.0) (2022-07-30)
 
 

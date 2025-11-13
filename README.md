@@ -1,12 +1,12 @@
-# highlight public notes
+# Highlight TLP Notes
 
-This plugin for [Obsidian](https://obsidian.md/) highlights the titlebar of notes that you **classify as public in the frontmatter** or that is **contained in a specific folder**. This prevents you from writing confidential data into notes you later publish e.g. through a script.
+This plugin for [Obsidian](https://obsidian.md/) highlights the UI of notes that you **classify with a TLP level in the frontmatter** or that are **contained in a specific folder**. This prevents you from leaking confidential data because the note is visually tagged as TLP WHITE, GREEN, AMBER, AMBER:STRICT, or RED the moment you open it.
 
 ![screenshot-full](https://raw.githubusercontent.com/dennisseidel/highlightpublicnotes-obsidian-plugin/master/images/example-highlightpublicnotes.png)
 
 ## Usage
 
-After enabling the plugin in the settings menu, configure if you want to highlight notes in a specific folder (e.g. `03_ARTICLES`) or highlight a frontmatter attribute and value (e.g. `classification: public`). You can update the `attribute` the plugin  checks as well as the `value`. Close the menu and add a note either to the highlighted folder or add the classified frontmatter attribute. **As the plugin only performs the highlight check when you load the file you need to reload the file to see the higlighted titlebar imidiately. You can reload the file by switching to another note and back**. You see on load of the page the plugin check the frontmatter e.g. `classification: public` or the path and highlights the titlebar red.
+After enabling the plugin in the settings menu, configure if you want to highlight notes in a specific folder (e.g. `03_ARTICLES`) or highlight a frontmatter attribute (e.g. `classification`). Within the frontmatter settings you can now define the exact string that represents each TLP level (defaults: `WHITE`, `GREEN`, `AMBER`, `AMBER:STRICT`, `RED`). Close the menu and add the selected classification to your note's frontmatter. **As the plugin only performs the highlight check when you load the file you need to reload the file to see the highlight immediately. You can reload the file by switching to another note and back**. When the note loads, the plugin checks the frontmatter/path and applies the matching TLP color.
 
 ## Alternative: cssclasses
 

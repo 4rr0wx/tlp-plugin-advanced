@@ -1,8 +1,73 @@
-/* Sets all the text color to red! */
-.myalert {
-    background: red !important;
+/* Base highlight styles shared across all TLP levels */
+.tlp-highlight,
+.tlp-highlight-light {
+    color: #111;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
-.myalert-light {
-    background: rgba(255, 122, 89, .3) !important;
+.tlp-highlight {
+    color: #fff;
+}
+
+.tlp-highlight-light {
+    border-left: 4px solid transparent;
+    padding-left: 8px;
+}
+
+/* WHITE */
+.tlp-highlight.tlp-white {
+    background: #f8f9fa !important;
+    color: #111 !important;
+}
+
+.tlp-highlight-light.tlp-white {
+    border-color: #d3d7dc !important;
+    background: rgba(248, 249, 250, 0.6) !important;
+    color: #111 !important;
+}
+
+/* GREEN */
+.tlp-highlight.tlp-green {
+    background: #008450 !important;
+}
+
+.tlp-highlight-light.tlp-green {
+    border-color: #008450 !important;
+    background: rgba(0, 132, 80, 0.2) !important;
+    color: #00462a !important;
+}
+
+/* AMBER */
+.tlp-highlight.tlp-amber {
+    background: #e39802 !important;
+    color: #111 !important;
+}
+
+.tlp-highlight-light.tlp-amber {
+    border-color: #e39802 !important;
+    background: rgba(227, 152, 2, 0.25) !important;
+    color: #7b5100 !important;
+}
+
+/* AMBER:STRICT */
+.tlp-highlight.tlp-amberStrict {
+    background: #c35600 !important;
+}
+
+.tlp-highlight-light.tlp-amberStrict {
+    border-color: #c35600 !important;
+    background: rgba(195, 86, 0, 0.25) !important;
+    color: #5a2b00 !important;
+}
+
+/* RED */
+.tlp-highlight.tlp-red {
+    background: #c40000 !important;
+}
+
+.tlp-highlight-light.tlp-red {
+    border-color: #c40000 !important;
+    background: rgba(196, 0, 0, 0.25) !important;
+    color: #5e0000 !important;
 }
